@@ -123,7 +123,7 @@ void Game::update(sf::Time t_deltaTime)
 
 	player.update();
 
-	//player.checkCollision(NOT_player.getBody());
+	player.checkCollision(NOT_player.getBody());
 
 	NOT_player.setPosition(getPosFromServer(myClient.getPositionMessage()));
 
@@ -131,6 +131,8 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		std::cout << "Failed to send position" << std::endl;
 	}
+
+	//std::cout << myClient.getID_Message() << std::endl;
 }
 
 /// <summary>
@@ -154,6 +156,11 @@ sf::Vector2f Game::getPosFromServer(std::string& opponentPos)
 		return sf::Vector2f(std::stof(opponentPosArray[0]), std::stof(opponentPosArray[1]));
 	}
 	return sf::Vector2f(0, 0);
+}
+
+int Game::getIDFromServer(std::string& opponent_ID)
+{
+	return std::stoi(opponent_ID);
 }
 
 int Game::len(std::string string)

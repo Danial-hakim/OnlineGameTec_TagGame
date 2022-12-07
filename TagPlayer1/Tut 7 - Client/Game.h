@@ -26,6 +26,7 @@ public:
 
 	std::string sendPosition();
 	std::string sendCollidingStatus();
+	std::string sendPlayerID();
 private:
 
 	void processEvents();

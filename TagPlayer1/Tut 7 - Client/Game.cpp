@@ -26,6 +26,12 @@ Game::Game() :
 	}
 
 	player.init(0);
+
+	if (!myClient.Send_ID(sendPlayerID()))
+	{
+		std::cout << "Failed to send ID" << std::endl;
+	}
+
 	NOT_player.init(1);
 }
 
@@ -74,6 +80,11 @@ std::string Game::sendPosition()
 std::string Game::sendCollidingStatus()
 {
 	return player.getCollisionStatus();
+}
+
+std::string Game::sendPlayerID()
+{
+	return std::to_string(player.getPlayerID());
 }
 
 /// <summary>

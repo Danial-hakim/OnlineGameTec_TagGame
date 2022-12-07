@@ -90,7 +90,7 @@ bool Server::ProcessPacket(int ID, Packet _packettype)
 				if (!SendPosition(i, Message)) //Send message to connection at index i, if message fails to be sent...
 				{
 					std::cout << "Failed to send message from client ID: " << ID << " to client ID: " << i << std::endl;
-					std::cout << "Player ID" << std::endl;
+					std::cout << "Position" << std::endl;
 				}
 			}
 
@@ -106,10 +106,10 @@ bool Server::ProcessPacket(int ID, Packet _packettype)
 			{
 				if (i == ID) //If connection is the user who sent the message...
 					continue;//Skip to the next user since there is no purpose in sending the message back to the user who sent it.
-				if (!SendString(i, Message)) //Send message to connection at index i, if message fails to be sent...
+				if (!SendPlayerID(i, Message)) //Send message to connection at index i, if message fails to be sent...
 				{
 					std::cout << "Failed to send message from client ID: " << ID << " to client ID: " << i << std::endl;
-					std::cout << "Position" << std::endl;
+					std::cout << "Player ID" << std::endl;
 				}
 			}
 
