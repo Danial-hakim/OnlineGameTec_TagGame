@@ -9,10 +9,18 @@ bool Client::ProcessPacket(Packet _packettype)
 		std::string Message; //string to store our message we received
 		if (!GetString(Message)) //Get the chat message and store it in variable: Message
 			return false; //If we do not properly get the chat message, return false
-		//std::cout << Message << std::endl; //Display the message to the user
+		setString(Message);
+		std::cout << Message << std::endl; //Display the message to the user
 		break;
 	}
-
+	case P_Position:
+	{
+		std::string Message; //string to store our message we received
+		if (!GetString(Message)) //Get the chat message and store it in variable: Message
+			return false; //If we do not properly get the chat message, return false
+		std::cout << Message << std::endl; //Display the message to the user
+		break;
+	}
 	default: //If packet type is not accounted for
 		std::cout << "Unrecognized packet: " << _packettype << std::endl; //Display that packet was not found
 		break;

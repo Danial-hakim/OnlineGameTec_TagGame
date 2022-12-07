@@ -11,6 +11,8 @@ enum Packet
 {
 	P_ChatMessage,
 	P_Test,
+	P_Position,
+	P_PlayerID
 };
 
 class Client
@@ -23,6 +25,8 @@ public: //Public functions
 	bool CloseConnection();
 	bool GetString(std::string& _string);
 	
+	bool SendPosition(std::string& _string);
+
 	std::string getMessage();
 	void setString(std::string message);
 

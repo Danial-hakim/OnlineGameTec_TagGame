@@ -23,6 +23,12 @@ public:
 
 	void setPosition(sf::Vector2f newPos);
 
+	void setColor();
+
+	void setPlayerID(int ID);
+
+	int getPlayerID();
+
 private:
 
 	sf::RectangleShape player;
@@ -30,5 +36,7 @@ private:
 	bool isColliding = false;
 
 	int playerID = -1;
+
+	sf::Color color;
 };
 

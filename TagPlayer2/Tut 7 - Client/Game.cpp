@@ -25,8 +25,8 @@ Game::Game() :
 		system("pause");
 	}
 
-	player.init(2);
-	NOT_player.init(1);
+	player.init(1);
+	NOT_player.init(0);
 }
 
 /// <summary>

@@ -25,8 +25,8 @@ Game::Game() :
 		system("pause");
 	}
 
-	player.init(1);
-	NOT_player.init(2);
+	player.init(0);
+	NOT_player.init(1);
 }
 
 /// <summary>
@@ -124,7 +124,7 @@ void Game::update(sf::Time t_deltaTime)
 
 	player.checkCollision(NOT_player.getBody());
 
-	if (!myClient.SendString(sendPosition()))
+	if (!myClient.SendPosition(sendPosition()))
 	{
 		std::cout << "Failed to send position" << std::endl;
 	}

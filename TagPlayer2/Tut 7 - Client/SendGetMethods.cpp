@@ -82,6 +82,18 @@ bool Client::GetString(std::string & _string)
 	return true;//Return true if we were successful in retrieving the string
 }
 
+bool Client::SendPosition(std::string& _string)
+{
+	if (!SendPacketType(P_Position)) //Send packet type: Chat Message, If sending packet type fails...
+		return false; //Return false: Failed to send string
+	int bufferlength = _string.size(); //Find string buffer length
+	if (!SendInt(bufferlength)) //Send length of string buffer, If sending buffer length fails...
+		return false; //Return false: Failed to send string buffer length
+	if (!sendall((char*)_string.c_str(), bufferlength)) //Try to send string buffer... If buffer fails to send,
+		return false; //Return false: Failed to send string buffer
+	return true; //Return true: string successfully sent
+}
+
 std::string Client::getMessage()
 {
 	return messageReceived;

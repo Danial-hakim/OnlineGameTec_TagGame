@@ -8,7 +8,9 @@
 enum Packet
 {
 	P_ChatMessage,
-	P_Test
+	P_Test,
+	P_Position,
+	P_PlayerID
 };
 
 class Server
@@ -16,9 +18,6 @@ class Server
 public:
 	Server(int PORT, bool BroadcastPublically = false);
 	bool ListenForNewConnection();
-
-	void setMessage(std::string message);
-	std::string getString();
 
 private:
 	bool sendall(int ID, char * data, int totalbytes);
@@ -36,6 +35,8 @@ private:
 	bool ProcessPacket(int ID, Packet _packettype);
 
 	static void ClientHandlerThread(int ID);
+
+	bool SendPosition(int ID, std::string& _string);
 
 private:
 	SOCKET Connections[100];

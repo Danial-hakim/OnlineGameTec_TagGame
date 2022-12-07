@@ -2,11 +2,11 @@
 
 void Player::init(int ID)
 {
-	player.setSize(sf::Vector2f(100, 100));
-	player.setFillColor(sf::Color::Red);
-	player.setPosition(sf::Vector2f(500, 500));
-
 	playerID = ID;
+	setColor();
+
+	player.setSize(sf::Vector2f(100, 100));
+	player.setPosition(sf::Vector2f(500, 500));
 }
 
 void Player::render(sf::RenderWindow& win)
@@ -16,11 +16,11 @@ void Player::render(sf::RenderWindow& win)
 
 void Player::update()
 {
-	if (playerID == 1)
+	if (playerID == 0)
 	{
 		checkInput();
 	}
-	else if(playerID == 2)
+	else if(playerID == 1)
 	{
 		tempInput();
 	}
@@ -98,6 +98,35 @@ std::string Player::getCollisionStatus()
 void Player::setPosition(sf::Vector2f newPos)
 {
 	player.setPosition(newPos);
+}
+
+void Player::setColor()
+{
+	switch (playerID)
+	{
+	case 1:
+		color = sf::Color::Blue;
+		break;
+	case 2:
+		color = sf::Color::Yellow;
+		break;
+	default:
+		color = sf::Color::Red;
+		break;
+	}
+
+	player.setFillColor(color);
+}
+
+void Player::setPlayerID(int ID)
+{
+	playerID = ID;
+	setColor();
+}
+
+int Player::getPlayerID()
+{
+	return playerID;
 }
 
 
