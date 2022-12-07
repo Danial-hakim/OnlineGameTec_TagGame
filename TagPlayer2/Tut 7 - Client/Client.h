@@ -25,10 +25,15 @@ public: //Public functions
 	bool CloseConnection();
 	bool GetString(std::string& _string);
 	
+	//Position 
 	bool SendPosition(std::string& _string);
+	std::string getPositionMessage();
+	void setPositionMessage(std::string message);
 
-	std::string getMessage();
-	void setString(std::string message);
+	//Player ID
+	bool Send_ID(std::string& _string);
+	std::string getID_Message();
+	void setID_Message(std::string message);
 
 private: //Private functions
 	bool ProcessPacket(Packet _packettype);
@@ -43,7 +48,8 @@ private: //Private functions
 	bool GetInt(int & _int);
 	bool GetPacketType(Packet & _packettype);
 
-	std::string messageReceived;
+	std::string positionMessage;
+	std::string ID_Message;
 
 private:
 	SOCKET Connection;//This client's connection to the server

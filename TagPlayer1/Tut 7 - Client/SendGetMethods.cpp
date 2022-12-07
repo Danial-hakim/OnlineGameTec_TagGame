@@ -94,12 +94,34 @@ bool Client::SendPosition(std::string& _string)
 	return true; //Return true: string successfully sent
 }
 
-std::string Client::getMessage()
+std::string Client::getPositionMessage()
 {
-	return messageReceived;
+	return positionMessage;
 }
 
-void Client::setString(std::string message)
+void Client::setPositionMessage(std::string message)
 {
-	messageReceived = message;
+	positionMessage = message;
+}
+
+bool Client::Send_ID(std::string& _string)
+{
+	if (!SendPacketType(P_PlayerID)) //Send packet type: Chat Message, If sending packet type fails...
+		return false; //Return false: Failed to send string
+	int bufferlength = _string.size(); //Find string buffer length
+	if (!SendInt(bufferlength)) //Send length of string buffer, If sending buffer length fails...
+		return false; //Return false: Failed to send string buffer length
+	if (!sendall((char*)_string.c_str(), bufferlength)) //Try to send string buffer... If buffer fails to send,
+		return false; //Return false: Failed to send string buffer
+	return true; //Return true: string successfully sent
+}
+
+std::string Client::getID_Message()
+{
+	return ID_Message;
+}
+
+void Client::setID_Message(std::string message)
+{
+	ID_Message = message;
 }

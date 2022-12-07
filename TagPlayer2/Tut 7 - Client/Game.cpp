@@ -123,7 +123,14 @@ void Game::update(sf::Time t_deltaTime)
 
 	player.update();
 
-	NOT_player.setPosition(getPosFromServer(myClient.getMessage()));
+	//player.checkCollision(NOT_player.getBody());
+
+	NOT_player.setPosition(getPosFromServer(myClient.getPositionMessage()));
+
+	if (!myClient.SendPosition(sendPosition()))
+	{
+		std::cout << "Failed to send position" << std::endl;
+	}
 }
 
 /// <summary>
@@ -140,9 +147,13 @@ void Game::render()
 
 sf::Vector2f Game::getPosFromServer(std::string& opponentPos)
 {
-	char seperator = ',';
-	split(opponentPos, seperator);
-	return sf::Vector2f(std::stof(opponentPosArray[0]), std::stof(opponentPosArray[1]));
+	if (!opponentPos.empty())
+	{
+		char seperator = ',';
+		split(opponentPos, seperator);
+		return sf::Vector2f(std::stof(opponentPosArray[0]), std::stof(opponentPosArray[1]));
+	}
+	return sf::Vector2f(0, 0);
 }
 
 int Game::len(std::string string)

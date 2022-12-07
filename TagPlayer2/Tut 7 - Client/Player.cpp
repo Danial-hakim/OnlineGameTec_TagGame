@@ -87,7 +87,7 @@ sf::RectangleShape Player::getBody()
 
 std::string Player::getPos()
 {
-	return std::to_string(player.getPosition().x) + " , " + std::to_string(player.getPosition().y);
+	return std::to_string(player.getPosition().x) + "," + std::to_string(player.getPosition().y);
 }
 
 std::string Player::getCollisionStatus()

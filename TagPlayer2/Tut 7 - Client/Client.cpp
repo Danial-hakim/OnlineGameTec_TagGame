@@ -9,7 +9,6 @@ bool Client::ProcessPacket(Packet _packettype)
 		std::string Message; //string to store our message we received
 		if (!GetString(Message)) //Get the chat message and store it in variable: Message
 			return false; //If we do not properly get the chat message, return false
-		setString(Message); 
 		std::cout << Message << std::endl; //Display the message to the user
 		break;
 	}
@@ -18,6 +17,7 @@ bool Client::ProcessPacket(Packet _packettype)
 		std::string Message; //string to store our message we received
 		if (!GetString(Message)) //Get the chat message and store it in variable: Message
 			return false; //If we do not properly get the chat message, return false
+		setPositionMessage(Message);
 		std::cout << Message << std::endl; //Display the message to the user
 		break;
 	}

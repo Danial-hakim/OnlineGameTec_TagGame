@@ -71,6 +71,7 @@ bool Server::ProcessPacket(int ID, Packet _packettype)
 				if (!SendString(i, Message)) //Send message to connection at index i, if message fails to be sent...
 				{
 					std::cout << "Failed to send message from client ID: " << ID << " to client ID: " << i << std::endl;
+					std::cout << "Chat"<< std::endl;
 				}
 			}
 			
@@ -86,9 +87,29 @@ bool Server::ProcessPacket(int ID, Packet _packettype)
 			{
 				if (i == ID) //If connection is the user who sent the message...
 					continue;//Skip to the next user since there is no purpose in sending the message back to the user who sent it.
+				if (!SendPosition(i, Message)) //Send message to connection at index i, if message fails to be sent...
+				{
+					std::cout << "Failed to send message from client ID: " << ID << " to client ID: " << i << std::endl;
+					std::cout << "Player ID" << std::endl;
+				}
+			}
+
+			break;
+		}
+		case P_PlayerID: //Packet Type: chat message
+		{
+			std::string Message; //string to store our message we received
+			if (!GetString(ID, Message)) //Get the chat message and store it in variable: Message
+				return false; //If we do not properly get the chat message, return false
+							  //Next we need to send the message out to each user
+			for (int i = 0; i < TotalConnections; i++)
+			{
+				if (i == ID) //If connection is the user who sent the message...
+					continue;//Skip to the next user since there is no purpose in sending the message back to the user who sent it.
 				if (!SendString(i, Message)) //Send message to connection at index i, if message fails to be sent...
 				{
 					std::cout << "Failed to send message from client ID: " << ID << " to client ID: " << i << std::endl;
+					std::cout << "Position" << std::endl;
 				}
 			}
 

@@ -37,6 +37,7 @@ private:
 	static void ClientHandlerThread(int ID);
 
 	bool SendPosition(int ID, std::string& _string);
+	bool SendPlayerID(int ID, std::string& _string);
 
 private:
 	SOCKET Connections[100];
