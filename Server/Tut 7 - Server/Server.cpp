@@ -47,8 +47,9 @@ bool Server::ListenForNewConnection()
 		std::cout << "Client Connected! ID:" << TotalConnections << std::endl;
 		Connections[TotalConnections] = newConnection; //Set socket in array to be the newest connection before creating the thread to handle this client's socket.
 		CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)ClientHandlerThread, (LPVOID)(TotalConnections), NULL, NULL); //Create Thread to handle this client. The index in the socket array for this thread is the value (i).
-		std::string MOTD = "Welcome ! You are player " + std::to_string(TotalConnections + 1);
-		SendString(TotalConnections, MOTD);
+		std::string MOTD = "Welcome ! You are player " + std::to_string(TotalConnections);
+		//SendString(TotalConnections, MOTD);
+		SendPlayerID(TotalConnections, std::to_string(TotalConnections));
 		TotalConnections += 1; //Incremenent total # of clients that have connected
 		return true;
 	}
@@ -77,7 +78,7 @@ bool Server::ProcessPacket(int ID, Packet _packettype)
 			
 			break;
 		}
-		case P_Position: //Packet Type: chat message
+		case P_Position: //Packet Type: position
 		{
 			std::string Message; //string to store our message we received
 			if (!GetString(ID, Message)) //Get the chat message and store it in variable: Message
@@ -96,7 +97,7 @@ bool Server::ProcessPacket(int ID, Packet _packettype)
 
 			break;
 		}
-		case P_PlayerID: //Packet Type: chat message
+		case P_PlayerID: //Packet Type: ID
 		{
 			std::string Message; //string to store our message we received
 			if (!GetString(ID, Message)) //Get the chat message and store it in variable: Message
@@ -105,11 +106,12 @@ bool Server::ProcessPacket(int ID, Packet _packettype)
 			for (int i = 0; i < TotalConnections; i++)
 			{
 				if (i == ID) //If connection is the user who sent the message...
-					continue;//Skip to the next user since there is no purpose in sending the message back to the user who sent it.
-				if (!SendPlayerID(i, Message)) //Send message to connection at index i, if message fails to be sent...
-				{
-					std::cout << "Failed to send message from client ID: " << ID << " to client ID: " << i << std::endl;
-					std::cout << "Player ID" << std::endl;
+				{ 	//continue;//Skip to the next user since there is no purpose in sending the message back to the user who sent it.
+					if (!SendPlayerID(i, Message)) //Send message to connection at index i, if message fails to be sent...
+					{
+						std::cout << "Failed to send message from client ID: " << ID << " to client ID: " << i << std::endl;
+						std::cout << "Player ID" << std::endl;
+					}
 				}
 			}
 

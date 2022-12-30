@@ -1,12 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string.h>
+#include <sstream>
+#include <iostream>
 
 class Player
 {
 public:
 	
-	void init(int ID);
+	void init(std::string stringID);
 	void render(sf::RenderWindow& win);
 	void update();
 	void checkInput();
@@ -29,6 +31,10 @@ public:
 
 	int getPlayerID();
 
+	int convertStringToID(std::string stringID);
+
+	bool isIDSet();
+
 private:
 
 	sf::RectangleShape player;
@@ -38,5 +44,7 @@ private:
 	int playerID = -1;
 
 	sf::Color color;
+
+	bool IDSet = false;
 };
 

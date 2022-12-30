@@ -1,8 +1,13 @@
 #include "Player.h"
 
-void Player::init(int ID)
+void Player::init(std::string stringID)
 {
-	playerID = ID;
+	//playerID = convertStringToID(stringID);
+	//playerID = 0;
+	
+	setPlayerID(convertStringToID(stringID));
+
+	//std::cout << "Player id is " << playerID << std::endl;
 	setColor();
 
 	player.setSize(sf::Vector2f(100, 100));
@@ -75,7 +80,7 @@ void Player::checkCollision(sf::RectangleShape opponent)
 	}
 	else
 	{
-		player.setFillColor(sf::Color::Red);
+		player.setFillColor(color);
 		isColliding = false;
 	}
 }
@@ -122,11 +127,25 @@ void Player::setPlayerID(int ID)
 {
 	playerID = ID;
 	setColor();
+	IDSet = true;
 }
 
 int Player::getPlayerID()
 {
 	return playerID;
+}
+
+int Player::convertStringToID(std::string stringID)
+{
+	std::istringstream stream(stringID);
+	int result;
+	stream >> result;
+	return result;
+}
+
+bool Player::isIDSet()
+{
+	return IDSet;
 }
 
 

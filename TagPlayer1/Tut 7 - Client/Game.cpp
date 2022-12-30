@@ -25,14 +25,14 @@ Game::Game() :
 		system("pause");
 	}
 
-	player.init(0);
+	//player.init(myClient.getID_Message());
 
-	if (!myClient.Send_ID(sendPlayerID()))
-	{
-		std::cout << "Failed to send ID" << std::endl;
-	}
+	//if (!myClient.Send_ID(sendPlayerID()))
+	//{
+	//	std::cout << "Failed to send ID" << std::endl;
+	//}
 
-	NOT_player.init(1);
+	NOT_player.init("1");
 }
 
 /// <summary>
@@ -132,9 +132,13 @@ void Game::update(sf::Time t_deltaTime)
 		m_window.close();
 	}
 
+	if (!player.isIDSet())
+	{
+		player.init(myClient.getID_Message());
+	}
 	player.update();
 
-	player.checkCollision(NOT_player.getBody());
+	//player.checkCollision(NOT_player.getBody());
 
 	NOT_player.setPosition(getPosFromServer(myClient.getPositionMessage()));
 

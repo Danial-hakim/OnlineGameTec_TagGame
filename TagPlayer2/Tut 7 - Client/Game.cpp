@@ -25,8 +25,7 @@ Game::Game() :
 		system("pause");
 	}
 
-	player.init(1);
-	NOT_player.init(0);
+	NOT_player.init("0");
 }
 
 /// <summary>
@@ -119,6 +118,11 @@ void Game::update(sf::Time t_deltaTime)
 	if (m_exitGame)
 	{
 		m_window.close();
+	}
+
+	if (!player.isIDSet())
+	{
+		player.init(myClient.getID_Message());
 	}
 
 	player.update();

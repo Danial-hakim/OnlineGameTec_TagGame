@@ -27,7 +27,7 @@ bool Client::ProcessPacket(Packet _packettype)
 		if (!GetString(Message)) //Get the chat message and store it in variable: Message
 			return false; //If we do not properly get the chat message, return false
 		setID_Message(Message);
-		std::cout << Message << std::endl; //Display the message to the user
+		//std::cout << Message << std::endl; //Display the message to the user
 		break;
 	}
 	default: //If packet type is not accounted for
