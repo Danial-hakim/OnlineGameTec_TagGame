@@ -125,3 +125,25 @@ void Client::setID_Message(std::string message)
 {
 	ID_Message = message;
 }
+
+bool Client::SendNum(std::string& _string)
+{
+	if (!SendPacketType(P_NumberOfPlayer)) //Send packet type: Chat Message, If sending packet type fails...
+		return false; //Return false: Failed to send string
+	int bufferlength = _string.size(); //Find string buffer length
+	if (!SendInt(bufferlength)) //Send length of string buffer, If sending buffer length fails...
+		return false; //Return false: Failed to send string buffer length
+	if (!sendall((char*)_string.c_str(), bufferlength)) //Try to send string buffer... If buffer fails to send,
+		return false; //Return false: Failed to send string buffer
+	return true; //Return true: string successfully sent
+}
+
+std::string Client::getPlayerNum_Message()
+{
+	return PlayerNum_Message;
+}
+
+void Client::setPlayerNum(std::string message)
+{
+	PlayerNum_Message = message;
+}

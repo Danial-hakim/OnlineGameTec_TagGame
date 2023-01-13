@@ -12,7 +12,8 @@ enum Packet
 	P_ChatMessage,
 	P_Test,
 	P_Position,
-	P_PlayerID
+	P_PlayerID,
+	P_NumberOfPlayer
 };
 
 class Client
@@ -35,6 +36,11 @@ public: //Public functions
 	std::string getID_Message();
 	void setID_Message(std::string message);
 
+	//Number of player
+	bool SendNum(std::string& _string);
+	std::string getPlayerNum_Message();
+	void setPlayerNum(std::string message);
+
 private: //Private functions
 	bool ProcessPacket(Packet _packettype);
 	static void ClientThread();
@@ -50,6 +56,7 @@ private: //Private functions
 
 	std::string positionMessage;
 	std::string ID_Message;
+	std::string PlayerNum_Message;
 
 private:
 	SOCKET Connection;//This client's connection to the server

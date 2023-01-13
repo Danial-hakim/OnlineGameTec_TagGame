@@ -51,6 +51,7 @@ bool Server::ListenForNewConnection()
 		//SendString(TotalConnections, MOTD);
 		SendPlayerID(TotalConnections, std::to_string(TotalConnections));
 		TotalConnections += 1; //Incremenent total # of clients that have connected
+		playerNum = TotalConnections;
 		return true;
 	}
 }
@@ -97,21 +98,26 @@ bool Server::ProcessPacket(int ID, Packet _packettype)
 
 			break;
 		}
-		case P_PlayerID: //Packet Type: ID
+		case P_NumberOfPlayer: //Packet Type: Number of player
 		{
 			std::string Message; //string to store our message we received
 			if (!GetString(ID, Message)) //Get the chat message and store it in variable: Message
 				return false; //If we do not properly get the chat message, return false
 							  //Next we need to send the message out to each user
+			Message = std::to_string(TotalConnections);
 			for (int i = 0; i < TotalConnections; i++)
 			{
 				if (i == ID) //If connection is the user who sent the message...
-				{ 	//continue;//Skip to the next user since there is no purpose in sending the message back to the user who sent it.
-					if (!SendPlayerID(i, Message)) //Send message to connection at index i, if message fails to be sent...
+				{ 	
+					if (!SendPlayerNum(i, Message)) //Send message to connection at index i, if message fails to be sent...
 					{
 						std::cout << "Failed to send message from client ID: " << ID << " to client ID: " << i << std::endl;
 						std::cout << "Player ID" << std::endl;
 					}
+				}
+				else
+				{
+					continue;
 				}
 			}
 

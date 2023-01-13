@@ -26,15 +26,19 @@ public:
 
 	std::string sendPosition();
 	std::string sendCollidingStatus();
-	std::string sendPlayerID();
+	//std::string sendID();
+	std::string sendNum();
 private:
 
 	void processEvents();
 	void processKeys(sf::Event t_event);
 	void update(sf::Time t_deltaTime);
 	void render();
+	void getNumberOfPlayer(std::string& string);
 
-	sf::Vector2f getPosFromServer(std::string& opponentPos);
+	sf::Vector2f getPosFromServer(std::string& opponentPos, bool smaller);
+	int len(std::string string);
+	void split(std::string string, char seperator, bool smaller);
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
@@ -44,15 +48,17 @@ private:
 	bool m_exitGame; // control exiting game
 
 	Player player;
-	Player NOT_player;
+	Player NOT_player; 
+	Player NOT_player_2;
 
 	Client myClient;
 
-	int len(std::string string);
+	std::string opponentPosArray[3];
+	std::string opponentPosArray_2[3];
 
-	void split(std::string string, char seperator);
+	int numberOfPlayer = 0;
 
-	std::string opponentPosArray[2];
+	std::string check;
 };
 
 #endif // !GAME_HPP

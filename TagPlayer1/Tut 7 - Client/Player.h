@@ -7,7 +7,7 @@
 class Player
 {
 public:
-	
+
 	void init(std::string stringID);
 	void render(sf::RenderWindow& win);
 	void update();
@@ -35,6 +35,8 @@ public:
 
 	bool isIDSet();
 
+	std::string getChecked();
+
 private:
 
 	sf::RectangleShape player;
@@ -44,7 +46,7 @@ private:
 	int playerID = -1;
 
 	sf::Color color;
-	
+
 	bool IDSet = false;
 };
 

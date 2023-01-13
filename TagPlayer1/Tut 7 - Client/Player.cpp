@@ -7,7 +7,6 @@ void Player::init(std::string stringID)
 	
 	setPlayerID(convertStringToID(stringID));
 
-	//std::cout << "Player id is " << playerID << std::endl;
 	setColor();
 
 	player.setSize(sf::Vector2f(100, 100));
@@ -92,7 +91,7 @@ sf::RectangleShape Player::getBody()
 
 std::string Player::getPos()
 {
-	return std::to_string(player.getPosition().x) + "," + std::to_string(player.getPosition().y);
+	return std::to_string(getPlayerID()) + "," + std::to_string(player.getPosition().x) + "," + std::to_string(player.getPosition().y);
 }
 
 std::string Player::getCollisionStatus()
@@ -146,6 +145,11 @@ int Player::convertStringToID(std::string stringID)
 bool Player::isIDSet()
 {
 	return IDSet;
+}
+
+std::string Player::getChecked()
+{
+	return std::to_string(10);
 }
 
 

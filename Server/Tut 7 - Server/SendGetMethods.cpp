@@ -97,8 +97,19 @@ bool Server::SendPosition(int ID, std::string& _string)
 
 bool Server::SendPlayerID(int ID, std::string& _string)
 {
-	int i = 0;
 	if (!SendPacketType(ID, P_PlayerID)) //Send packet type: Chat Message, If sending packet type fails...
+		return false; //Return false: Failed to send string
+	int bufferlength = _string.size(); //Find string buffer length
+	if (!SendInt(ID, bufferlength)) //Send length of string buffer, If sending buffer length fails...
+		return false; //Return false: Failed to send string buffer length
+	if (!sendall(ID, (char*)_string.c_str(), bufferlength)) //Try to send string buffer... If buffer fails to send,
+		return false; //Return false: Failed to send string buffer
+	return true; //Return true: string successfully sent
+}
+
+bool Server::SendPlayerNum(int ID, std::string& _string)
+{
+	if (!SendPacketType(ID, P_NumberOfPlayer)) //Send packet type: Chat Message, If sending packet type fails...
 		return false; //Return false: Failed to send string
 	int bufferlength = _string.size(); //Find string buffer length
 	if (!SendInt(ID, bufferlength)) //Send length of string buffer, If sending buffer length fails...

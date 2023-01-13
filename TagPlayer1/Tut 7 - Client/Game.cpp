@@ -24,15 +24,6 @@ Game::Game() :
 		std::cout << "Failed to connect to server..." << std::endl;
 		system("pause");
 	}
-
-	//player.init(myClient.getID_Message());
-
-	//if (!myClient.Send_ID(sendPlayerID()))
-	//{
-	//	std::cout << "Failed to send ID" << std::endl;
-	//}
-
-	NOT_player.init("1");
 }
 
 /// <summary>
@@ -82,9 +73,14 @@ std::string Game::sendCollidingStatus()
 	return player.getCollisionStatus();
 }
 
-std::string Game::sendPlayerID()
+//std::string Game::sendID()
+//{
+//	return std::string(std::to_string(player.getPlayerID()));
+//}
+
+std::string Game::sendNum()
 {
-	return std::to_string(player.getPlayerID());
+	return player.getChecked();
 }
 
 /// <summary>
@@ -138,13 +134,46 @@ void Game::update(sf::Time t_deltaTime)
 	}
 	player.update();
 
-	//player.checkCollision(NOT_player.getBody());
+	player.checkCollision(NOT_player.getBody());
 
-	NOT_player.setPosition(getPosFromServer(myClient.getPositionMessage()));
+	if (numberOfPlayer == 3)
+	{
+		NOT_player.setPosition(getPosFromServer(myClient.getPositionMessage(), true));
+		NOT_player_2.setPosition(getPosFromServer(myClient.getPositionMessage(), false));
+	}
+	else
+	{
+		NOT_player.setPosition(getPosFromServer(myClient.getPositionMessage(),true));
+	}
 
 	if (!myClient.SendPosition(sendPosition()))
 	{
 		std::cout << "Failed to send position" << std::endl;
+	}
+
+	if (!myClient.SendNum(sendNum()))
+	{
+		std::cout << "Failed to receive number of player" << std::endl;
+	}
+	else
+	{
+		getNumberOfPlayer(myClient.getPlayerNum_Message());
+	}
+
+	//if (!myClient.Send_ID(sendID()))
+	//{
+	//	std::cout << "Failed to send ID" << std::endl;
+	//}
+	if (!NOT_player.isIDSet() && !opponentPosArray[0].empty())
+	{
+		NOT_player.init(opponentPosArray[0]);
+		std::cout << NOT_player.getPlayerID() << std::endl;
+	}
+
+	if (numberOfPlayer == 3 && !NOT_player_2.isIDSet() && !opponentPosArray_2[0].empty())
+	{
+		NOT_player_2.init(opponentPosArray_2[0]);
+		std::cout << NOT_player_2.getPlayerID() << std::endl;
 	}
 }
 
@@ -156,18 +185,44 @@ void Game::render()
 	m_window.clear(sf::Color::Black);
 
 	NOT_player.render(m_window);
+	NOT_player_2.render(m_window);
 	player.render(m_window);
 	m_window.display();
 }
 
-sf::Vector2f Game::getPosFromServer(std::string& opponentPos)
+void Game::getNumberOfPlayer(std::string& string)
 {
-	if (!opponentPos.empty())
+	if (!string.empty())
 	{
-		char seperator = ',';
-		split(opponentPos, seperator);
-		return sf::Vector2f(std::stof(opponentPosArray[0]), std::stof(opponentPosArray[1]));
+		if (string == "1" || string == "2" || string == "3")
+		{
+			//std::cout << string << std::endl;
+			numberOfPlayer = std::stoi(string);
+		}
 	}
+}
+
+sf::Vector2f Game::getPosFromServer(std::string& opponentPos, bool smaller)
+{
+	if (smaller)
+	{
+		if (!opponentPos.empty())
+		{
+			char seperator = ',';
+			split(opponentPos, seperator,smaller);
+			return sf::Vector2f(std::stof(opponentPosArray[1]), std::stof(opponentPosArray[2]));
+		}
+	}
+	else if(!smaller && numberOfPlayer == 3)
+	{
+		if (!opponentPos.empty())
+		{
+			char seperator = ',';
+			split(opponentPos, seperator, smaller);
+			return sf::Vector2f(std::stof(opponentPosArray_2[1]), std::stof(opponentPosArray_2[2]));
+		}
+	}
+	
 	return sf::Vector2f(0, 0);
 }
 
@@ -178,26 +233,47 @@ int Game::len(std::string string)
 	for (int i = 0; string[i] != '\0'; i++)
 	{
 		length++;
-
 	}
 	return length;
 }
 
-void Game::split(std::string string, char seperator)
+void Game::split(std::string string, char seperator, bool smaller)
 {
 	int currIndex = 0, i = 0;
 	int startIndex = 0, endIndex = 0;
+
 	while (i <= len(string))
 	{
-		if (string[i] == seperator || i == len(string))
+		if (smaller)
 		{
-			endIndex = i;
-			std::string subStr = "";
-			subStr.append(string, startIndex, endIndex - startIndex);
-			opponentPosArray[currIndex] = subStr;
-			currIndex += 1;
-			startIndex = endIndex + 1;
+			if (string[i] == seperator || i == len(string))
+			{
+				endIndex = i;
+				std::string subStr = "";
+				subStr.append(string, startIndex, endIndex - startIndex);
+				opponentPosArray[currIndex] = subStr;
+				currIndex += 1;
+				startIndex = endIndex + 1;
+			}
+			i++;
 		}
-		i++;
+		else if (!smaller && numberOfPlayer == 3)
+		{
+			if (string[i] == seperator || i == len(string))
+			{
+				endIndex = i;
+				std::string subStr = "";
+				subStr.append(string, startIndex, endIndex - startIndex);
+				opponentPosArray_2[currIndex] = subStr;
+				currIndex += 1;
+				startIndex = endIndex + 1;
+			}
+			i++;
+		}
 	}
+
+	//std::cout << "=============================" << std::endl;
+	//std::cout << opponentPosArray[0] << " : " << opponentPosArray[1] << "," << opponentPosArray[2] << std::endl;
+	//std::cout << opponentPosArray_2[0] << " : " << opponentPosArray_2[1] << "," << opponentPosArray_2[2] << std::endl;
+	//std::cout << "=============================" << std::endl;
 }

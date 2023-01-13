@@ -10,7 +10,8 @@ enum Packet
 	P_ChatMessage,
 	P_Test,
 	P_Position,
-	P_PlayerID
+	P_PlayerID,
+	P_NumberOfPlayer
 };
 
 class Server
@@ -18,6 +19,8 @@ class Server
 public:
 	Server(int PORT, bool BroadcastPublically = false);
 	bool ListenForNewConnection();
+
+	int playerNum;
 
 private:
 	bool sendall(int ID, char * data, int totalbytes);
@@ -38,6 +41,7 @@ private:
 
 	bool SendPosition(int ID, std::string& _string);
 	bool SendPlayerID(int ID, std::string& _string);
+	bool SendPlayerNum(int ID, std::string& _string);
 
 private:
 	SOCKET Connections[100];
