@@ -17,13 +17,10 @@
 /// </summary>
 Game::Game() :
 	m_window{ sf::VideoMode{ ScreenSize::width, ScreenSize::height, 32U }, "PLAYER 1" },
-	m_exitGame{false}, myClient("127.0.0.1", 623) //when true game will exit
+	m_exitGame{false} , mainGame(m_window), mainMenu(m_window), tutorialScreen(m_window)//when true game will exit
 {
-	if (!myClient.Connect()) //If client fails to connect...
-	{
-		std::cout << "Failed to connect to server..." << std::endl;
-		system("pause");
-	}
+	mainMenu.init();
+	tutorialScreen.init();
 }
 
 /// <summary>
@@ -46,41 +43,24 @@ void Game::run()
 {	
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
-	const float fps{ 60.0f };
-	sf::Time timePerFrame = sf::seconds(1.0f / fps); // 60 fps
+	sf::Time timePerFrame = sf::seconds(1.f / 60.f);
+	sf::Int32 lag = 0;
 
 	while (m_window.isOpen())
 	{
-		processEvents(); // as many as possible
+		processEvents();
+
 		timeSinceLastUpdate += clock.restart();
+
 		while (timeSinceLastUpdate > timePerFrame)
 		{
 			timeSinceLastUpdate -= timePerFrame;
-			processEvents(); // at least 60 fps
-			update(timePerFrame); //60 fps
+			processEvents();
+			update(timePerFrame.asMicroseconds() / 500);
 		}
-		render(); // as many as possible
+
+		render();
 	}
-}
-
-std::string Game::sendPosition()
-{
-	return player.getPos();
-}
-
-std::string Game::sendCollidingStatus()
-{
-	return player.getCollisionStatus();
-}
-
-//std::string Game::sendID()
-//{
-//	return std::string(std::to_string(player.getPlayerID()));
-//}
-
-std::string Game::sendNum()
-{
-	return player.getChecked();
 }
 
 /// <summary>
@@ -90,17 +70,15 @@ std::string Game::sendNum()
 /// </summary>
 void Game::processEvents()
 {
-	sf::Event newEvent;
-	while (m_window.pollEvent(newEvent))
+	sf::Event event;
+	while (m_window.pollEvent(event))
 	{
-		if ( sf::Event::Closed == newEvent.type) // window message
+		if (event.type == sf::Event::Closed)
 		{
-			m_exitGame = true;
+			m_window.close();
 		}
-		if (sf::Event::KeyPressed == newEvent.type) //user pressed a key
-		{
-			processKeys(newEvent);
-		}
+
+		processGameEvent(event);
 	}
 }
 
@@ -121,59 +99,24 @@ void Game::processKeys(sf::Event t_event)
 /// Update the game world
 /// </summary>
 /// <param name="t_deltaTime">time interval per frame</param>
-void Game::update(sf::Time t_deltaTime)
+void Game::update(double t_deltaTime)
 {
 	if (m_exitGame)
 	{
 		m_window.close();
 	}
 
-	if (!player.isIDSet())
+	switch (SceneTypes::currentScene)
 	{
-		player.init(myClient.getID_Message());
-	}
-	player.update();
-
-	player.checkCollision(NOT_player.getBody());
-
-	if (numberOfPlayer == 3)
-	{
-		NOT_player.setPosition(getPosFromServer(myClient.getPositionMessage(), true));
-		NOT_player_2.setPosition(getPosFromServer(myClient.getPositionMessage(), false));
-	}
-	else
-	{
-		NOT_player.setPosition(getPosFromServer(myClient.getPositionMessage(),true));
-	}
-
-	if (!myClient.SendPosition(sendPosition()))
-	{
-		std::cout << "Failed to send position" << std::endl;
-	}
-
-	if (!myClient.SendNum(sendNum()))
-	{
-		std::cout << "Failed to receive number of player" << std::endl;
-	}
-	else
-	{
-		getNumberOfPlayer(myClient.getPlayerNum_Message());
-	}
-
-	//if (!myClient.Send_ID(sendID()))
-	//{
-	//	std::cout << "Failed to send ID" << std::endl;
-	//}
-	if (!NOT_player.isIDSet() && !opponentPosArray[0].empty())
-	{
-		NOT_player.init(opponentPosArray[0]);
-		std::cout << NOT_player.getPlayerID() << std::endl;
-	}
-
-	if (numberOfPlayer == 3 && !NOT_player_2.isIDSet() && !opponentPosArray_2[0].empty())
-	{
-		NOT_player_2.init(opponentPosArray_2[0]);
-		std::cout << NOT_player_2.getPlayerID() << std::endl;
+	case Scenes::MAIN_GAME:
+		mainGame.update();
+		break;
+	case Scenes::MENU:
+		mainMenu.update(m_window);
+		break;
+	case Scenes::TUTORIAL:
+		tutorialScreen.update(m_window);
+		break;
 	}
 }
 
@@ -183,97 +126,39 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
-
-	NOT_player.render(m_window);
-	NOT_player_2.render(m_window);
-	player.render(m_window);
+	switch (SceneTypes::currentScene)
+	{
+	case Scenes::MAIN_GAME:
+		mainGame.render(m_window);
+		break;
+	case Scenes::MENU:
+		mainMenu.render(m_window);
+		break;
+	case Scenes::TUTORIAL:
+		tutorialScreen.render(m_window);
+		break;
+	}
 	m_window.display();
 }
 
-void Game::getNumberOfPlayer(std::string& string)
+void Game::processGameEvent(sf::Event& event)
 {
-	if (!string.empty())
+	if (sf::Event::KeyPressed == event.type || sf::Event::KeyReleased == event.type
+		|| event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseMoved
+		|| event.type == sf::Event::MouseButtonReleased)
 	{
-		if (string == "1" || string == "2" || string == "3")
+		switch (SceneTypes::currentScene)
 		{
-			//std::cout << string << std::endl;
-			numberOfPlayer = std::stoi(string);
+		case Scenes::MAIN_GAME:
+			mainGame.processEvents();
+			break;
+		case Scenes::MENU:
+			mainMenu.processGameEvents(event, m_window);
+			break;
+		case Scenes::TUTORIAL:
+			tutorialScreen.processGameEvents(event, m_window);
+			break;
 		}
+
 	}
-}
-
-sf::Vector2f Game::getPosFromServer(std::string& opponentPos, bool smaller)
-{
-	if (smaller)
-	{
-		if (!opponentPos.empty())
-		{
-			char seperator = ',';
-			split(opponentPos, seperator,smaller);
-			return sf::Vector2f(std::stof(opponentPosArray[1]), std::stof(opponentPosArray[2]));
-		}
-	}
-	else if(!smaller && numberOfPlayer == 3)
-	{
-		if (!opponentPos.empty())
-		{
-			char seperator = ',';
-			split(opponentPos, seperator, smaller);
-			return sf::Vector2f(std::stof(opponentPosArray_2[1]), std::stof(opponentPosArray_2[2]));
-		}
-	}
-	
-	return sf::Vector2f(0, 0);
-}
-
-int Game::len(std::string string)
-{
-	int length = 0;
-
-	for (int i = 0; string[i] != '\0'; i++)
-	{
-		length++;
-	}
-	return length;
-}
-
-void Game::split(std::string string, char seperator, bool smaller)
-{
-	int currIndex = 0, i = 0;
-	int startIndex = 0, endIndex = 0;
-
-	while (i <= len(string))
-	{
-		if (smaller)
-		{
-			if (string[i] == seperator || i == len(string))
-			{
-				endIndex = i;
-				std::string subStr = "";
-				subStr.append(string, startIndex, endIndex - startIndex);
-				opponentPosArray[currIndex] = subStr;
-				currIndex += 1;
-				startIndex = endIndex + 1;
-			}
-			i++;
-		}
-		else if (!smaller && numberOfPlayer == 3)
-		{
-			if (string[i] == seperator || i == len(string))
-			{
-				endIndex = i;
-				std::string subStr = "";
-				subStr.append(string, startIndex, endIndex - startIndex);
-				opponentPosArray_2[currIndex] = subStr;
-				currIndex += 1;
-				startIndex = endIndex + 1;
-			}
-			i++;
-		}
-	}
-
-	//std::cout << "=============================" << std::endl;
-	//std::cout << opponentPosArray[0] << " : " << opponentPosArray[1] << "," << opponentPosArray[2] << std::endl;
-	//std::cout << opponentPosArray_2[0] << " : " << opponentPosArray_2[1] << "," << opponentPosArray_2[2] << std::endl;
-	//std::cout << "=============================" << std::endl;
 }
