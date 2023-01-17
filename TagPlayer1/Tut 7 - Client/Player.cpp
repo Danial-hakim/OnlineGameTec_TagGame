@@ -140,6 +140,7 @@ std::string Player::getCollisionStatus()
 void Player::setPosition(sf::Vector2f newPos)
 {
 	player.setPosition(newPos);
+	updateTextPosition();
 }
 
 void Player::setColor()
