@@ -26,11 +26,16 @@ void Player::init(std::string stringID)
 	stateText.setCharacterSize(150);
 	stateText.setPosition((ScreenSize::width / 2) - 100, ScreenSize::height / 2);
 	stateText.setFillColor(sf::Color::Magenta);
+
+	roleText.setFont(font);
+	roleText.setCharacterSize(50);
+	roleText.setFillColor(sf::Color::White);
 }
 
 void Player::render(sf::RenderWindow& win)
 {
 	win.draw(player);
+	win.draw(roleText);
 	win.draw(timerText);
 
 	if (gameOver)
@@ -41,6 +46,7 @@ void Player::render(sf::RenderWindow& win)
 
 void Player::update()
 {
+	
 	if (!gameOver && bothPlayerReady)
 	{
 		updateTimer();
@@ -54,7 +60,9 @@ void Player::update()
 	{
 		tempInput();
 	}
+	updateTextPosition();
 	checkState();
+	checkBoundary();
 }
 
 void Player::checkInput()
@@ -141,6 +149,7 @@ void Player::setColor()
 	case 1:
 		color = sf::Color::Blue;
 		currentRole = Role::Runner;
+		roleText.setString("Runner");
 		break;
 	case 2:
 		color = sf::Color::Yellow;
@@ -148,6 +157,7 @@ void Player::setColor()
 	default:
 		color = sf::Color::Red;
 		currentRole = Role::Chaser;
+		roleText.setString("Chaser");
 		break;
 	}
 
@@ -221,6 +231,33 @@ void Player::updateTimer()
 	}
 	timerText.setString(std::to_string(minutes) + ":" + std::to_string(seconds));
 
+}
+
+void Player::checkBoundary()
+{
+	if (player.getPosition().x < 0)
+	{
+		player.setPosition(ScreenSize::width,player.getPosition().y);
+	}
+
+	if (player.getPosition().x > ScreenSize::width)
+	{
+		player.setPosition(0, player.getPosition().y);
+	}
+	if (player.getPosition().y < 0)
+	{
+		player.setPosition(player.getPosition().x,ScreenSize::height);
+	}
+
+	if (player.getPosition().y > ScreenSize::height)
+	{
+		player.setPosition(player.getPosition().x, 0);
+	}
+}
+
+void Player::updateTextPosition()
+{
+	roleText.setPosition(sf::Vector2f(player.getPosition().x - 20, player.getPosition().y - 70));
 }
 
 

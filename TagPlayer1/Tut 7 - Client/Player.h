@@ -38,6 +38,9 @@ public:
 	void checkState();
 
 	void updateTimer();
+	void checkBoundary();
+
+	void updateTextPosition();
 
 	bool bothPlayerReady = false;
 
@@ -58,6 +61,7 @@ private:
 	sf::Font font;
 	sf::Text timerText;
 	sf::Text stateText;
+	sf::Text roleText;
 
 	bool gameOver = false;
 
