@@ -9,11 +9,6 @@ void TutorialScreen::init()
 	sf::String Texts[] = { "Instruction","Back" };
 	initialise(1, Texts);
 
-	if (!bgTexture.loadFromFile("./Assets/Sprites/tutorial.png"))
-	{
-		std::cout << "Error when loading tutorial background image." << std::endl;
-	}
-
 	buttonSprites[0].setPosition(ScreenSize::width * 0.83f, ScreenSize::height * 0.83f);
 	buttonText[0].setPosition(buttonSprites[0].getPosition() + sf::Vector2f(0, BUTTON_TEXT_OFFSET));
 }

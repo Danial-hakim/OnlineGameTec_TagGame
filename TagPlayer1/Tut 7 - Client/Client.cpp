@@ -40,7 +40,7 @@ bool Client::ProcessPacket(Packet _packettype)
 		break;
 	}
 	default: //If packet type is not accounted for
-		std::cout << "Unrecognized packet: " << _packettype << std::endl; //Display that packet was not found
+		//std::cout << "Unrecognized packet: " << _packettype << std::endl; //Display that packet was not found
 		break;
 	}
 	return true;

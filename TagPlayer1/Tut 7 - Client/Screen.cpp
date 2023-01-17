@@ -82,7 +82,10 @@ void Screen::initialise(int optionSize, sf::String t_texts[])
 
 void Screen::render(sf::RenderWindow& t_window)
 {
-	t_window.draw(bgSprite);
+	if (SceneTypes::currentScene == Scenes::TUTORIAL)
+	{
+		t_window.draw(bgSprite);
+	}
 	t_window.draw(titleText);
 	for (int i = 0; i < OPTION_COUNT; i++)
 	{

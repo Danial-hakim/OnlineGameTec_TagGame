@@ -159,6 +159,7 @@ void Game::processGameEvent(sf::Event& event)
 			tutorialScreen.processGameEvents(event, m_window);
 			break;
 		}
+		processKeys(event);
 
 	}
 }

@@ -70,6 +70,7 @@ void MainGame::update()
 	if (!NOT_player.isIDSet() && !opponentPosArray[0].empty())
 	{
 		NOT_player.init(opponentPosArray[0]);
+		player.bothPlayerReady = true;
 		std::cout << NOT_player.getPlayerID() << std::endl;
 	}
 

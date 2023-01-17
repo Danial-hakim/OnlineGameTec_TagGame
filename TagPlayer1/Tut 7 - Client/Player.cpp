@@ -11,15 +11,41 @@ void Player::init(std::string stringID)
 
 	player.setSize(sf::Vector2f(100, 100));
 	player.setPosition(sf::Vector2f(500, 500));
+
+	if (!font.loadFromFile("Assets/Fonts/alien.ttf"))
+	{
+		std::cout << "Unable to load font." << std::endl;
+	}
+
+	timerText.setFont(font);
+	timerText.setCharacterSize(75);
+	timerText.setPosition(ScreenSize::width / 2, 20);
+	timerText.setFillColor(sf::Color::Green);
+
+	stateText.setFont(font);
+	stateText.setCharacterSize(150);
+	stateText.setPosition((ScreenSize::width / 2) - 100, ScreenSize::height / 2);
+	stateText.setFillColor(sf::Color::Magenta);
 }
 
 void Player::render(sf::RenderWindow& win)
 {
 	win.draw(player);
+	win.draw(timerText);
+
+	if (gameOver)
+	{
+		win.draw(stateText);
+	}
 }
 
 void Player::update()
 {
+	if (!gameOver && bothPlayerReady)
+	{
+		updateTimer();
+	}
+
 	if (playerID == 0)
 	{
 		checkInput();
@@ -28,6 +54,7 @@ void Player::update()
 	{
 		tempInput();
 	}
+	checkState();
 }
 
 void Player::checkInput()
@@ -72,15 +99,18 @@ void Player::tempInput()
 
 void Player::checkCollision(sf::RectangleShape opponent)
 {
-	if (player.getGlobalBounds().intersects(opponent.getGlobalBounds()))
+	if (!isInvincible)
 	{
-		player.setFillColor(sf::Color::White);
-		isColliding = true;
-	}
-	else
-	{
-		player.setFillColor(color);
-		isColliding = false;
+		if (player.getGlobalBounds().intersects(opponent.getGlobalBounds()))
+		{
+			player.setFillColor(sf::Color::White);
+			isColliding = true;
+		}
+		else
+		{
+			player.setFillColor(color);
+			isColliding = false;
+		}
 	}
 }
 
@@ -110,12 +140,14 @@ void Player::setColor()
 	{
 	case 1:
 		color = sf::Color::Blue;
+		currentRole = Role::Runner;
 		break;
 	case 2:
 		color = sf::Color::Yellow;
 		break;
 	default:
 		color = sf::Color::Red;
+		currentRole = Role::Chaser;
 		break;
 	}
 
@@ -150,6 +182,45 @@ bool Player::isIDSet()
 std::string Player::getChecked()
 {
 	return std::to_string(10);
+}
+
+void Player::checkState()
+{
+	if (isColliding)
+	{
+		if (currentRole == Role::Chaser)
+		{
+			stateText.setString("YOU WIN");
+		}
+		else
+		{
+			stateText.setString("YOU LOSE");
+		}
+		gameOver = true;
+	}
+}
+
+void Player::updateTimer()
+{
+	timer = clock.getElapsedTime().asSeconds();
+	
+	if (timer >= 1.0f)
+	{
+		clock.restart();
+		seconds++;
+		if (seconds == 60)
+		{
+			minutes++;
+			seconds = 0;
+		}
+	}
+
+	if (isInvincible && seconds == 10)
+	{
+		isInvincible = false;
+	}
+	timerText.setString(std::to_string(minutes) + ":" + std::to_string(seconds));
+
 }
 
 
